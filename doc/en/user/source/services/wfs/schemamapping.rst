@@ -1,6 +1,6 @@
 .. _schema_mapping:
 
-WFS Schema Mapping
+WFS schema mapping
 ==================
 
 One of the functions of the GeoServer WFS is to automatically map the internal 
@@ -164,7 +164,7 @@ Another ``GetFeature`` request now results in features in which the
 .. _type_changing:
 
 Type changing
---------------
+-------------
 
 Schema customization can be used to do a limited amount of *type changing*. 
 Limited by the fact that a changed type must be in the same "domain" as the 
