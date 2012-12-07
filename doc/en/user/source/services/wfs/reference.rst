@@ -1,5 +1,8 @@
 .. _wfs_reference: 
 
+
+.. warning:: Document Status: ** Requires Tech review**
+
 WFS reference
 ============= 
 

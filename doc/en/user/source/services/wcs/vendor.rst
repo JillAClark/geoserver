@@ -1,5 +1,7 @@
 .. _wcs_vendor_parameters:
 
+.. warning:: Document Status: ** Requires Tech review**
+
 WCS Vendor Parameters
 =====================
 

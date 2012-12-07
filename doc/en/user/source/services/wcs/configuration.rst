@@ -1,5 +1,7 @@
 .. _wcs_configuration:
 
+.. warning:: Document Status: ** Requires Tech review**
+
 WCS configuration
 =================
 

@@ -1,5 +1,7 @@
 .. _wcs_output_formats:
 
+.. warning:: Document Status: ** Requires Tech review**
+
 WCS output formats
 ==================
 

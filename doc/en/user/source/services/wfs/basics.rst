@@ -1,5 +1,7 @@
 .. _wfs_basics:
 
+.. warning:: Document Status: ** Requires Tech review**
+
 WFS basics
 ==========
 
