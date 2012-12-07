@@ -15,7 +15,7 @@ A related OGC specification, the Web Map Service (:ref:`wms`), defines the stand
 Benefits of WFS
 ---------------
 
-The WFS standard defines the framework for providing access to, and supporting transactions on, discrete geographic features in a manner that is independent of the underlying data source. Through a combination of discovery, query, locking and transactions operations, users have access to the source spatial and attribute data in a manner that allows them to query, style, edit (create, update, and delete), and download individual features. The transactional capabilities of WFS also support the development and deployment of collaborative mapping applications. 
+The WFS standard defines the framework for providing access to, and supporting transactions on, discrete geographic features in a manner that is independent of the underlying data source. Through a combination of discovery, query, locking and transaction operations, users have access to the source spatial and attribute data in a manner that allows them to query, style, edit (create, update, and delete), and download individual features. The transactional capabilities of WFS also support the development and deployment of collaborative mapping applications. 
 
 Operations
 ----------
@@ -52,7 +52,9 @@ WFS supports the following 12 operations:
    * - ``DescribeStoredQueries``
      - *(Version 2.0.0 only)*—Returns a metadata document describing the stored queries on a WFS server
 
-.. note:: In the examples that follow, the fictional URL http://www.example.com/wfs? is used for illustration. Substitute the address of a valid WFS server as required.
+.. note:: In the some of the examples that follow, the fictional URL http://www.example.com/wfs? is used for illustration. Substitute the address of a valid WFS server as required.
+
+.. _wfs_getcap:
 
 GetCapabilities
 ---------------
@@ -87,7 +89,7 @@ All requests to a WFS server must include three mandatory parameters:
 
 * *service*—Instructs the WFS server that a WFS request has been sent  
 * *version*—Refers to the version of WFS being requested. Supplying a value like "1" or "1.1" will likely return an error. 
-* *request*—Specification of the GetCapabilities operation
+* *request*—Specifies of the GetCapabilities operation 
 
 Although these parameters are mandatory, if any are omitted from a request, GeoServer will provide default values.
 
@@ -107,8 +109,7 @@ There are five main components in a GetCapabilities document:
    * - **FeatureTypeList**
      - Lists the feature types published by a WFS server. Feature types are listed in the form *namespace:featuretype*. The default projection of the feature type is also listed, along with the  bounding box for the data in the stated projection.
    * - **Filter_Capabilities**
-     - Lists the filters or expressions that are available to form query predicates. For example,
-     SpatialOperators (Equals, Touches) and ComparisonOperators (LessThan, GreaterThan). The filters are not defined in the Capabilities document but are for the most part self explanatory.
+     - Lists the filters or expressions that are available to form query predicates. For example, SpatialOperators (Equals, Touches) and ComparisonOperators (LessThan, GreaterThan). The filters are not defined in the Capabilities document but are for the most part self explanatory.
 
 DescribeFeatureType
 -------------------
@@ -142,7 +143,9 @@ The parameters for **DescribeFeatureType** are:
      - No
      - Defines the scheme description language used to describe feature types
 
-To return a list of feature types, the GET request would be:
+Note again the four required parameters—``service``, ``version``, ``request`` and '``typeNames``.
+
+To return a list of feature types, the GET request would be as follows. This request will return the list of feature types, sorted by namespace.
 
 .. code-block:: xml 
 
@@ -150,8 +153,6 @@ To return a list of feature types, the GET request would be:
       service=wfs&
       version=1.1.0&
       request=DescribeFeatureType
-
-Note again the three required parameters—``service``, ``version``, and ``request``. This request will return the list of feature types, sorted by namespace.
 
 To list information about a specific feature type, the GET request would be:
 
@@ -338,27 +339,39 @@ As for which corners of the bounding box to specify, the only requirement is for
       bbox=a1,b1,a2,b2
 
 
-Transaction
------------
-
-The **Transaction** operation can create, modify, and remove features published by a WFS. Each transaction will consists of zero or more Insert, Update, and Delete elements, with each transaction element performed in order. In GeoServer every transaction is *atomic*, meaning that if any of the elements fail, the transaction is abandoned and the data is unaltered.
-
-More information on the syntax of transactions can be found in the `WFS specification <http://www.opengeospatial.org/standards/wfs>`_ and in the GeoServer sample requests.  
-
 LockFeature
 -----------
 
-A **LockFeature** operation provides a long-term feature locking mechanism to ensure consistency in edit transactions. If one client fetches a feature and makes some changes before submitting it back to the WFS, locks prevent other clients from making any changes to the same feature, ensuring a serializable transaction. If a WFS server supports the LockFeature operation, this will be reported in the server's GetCapabilities response.
+A **LockFeature** operation provides a long-term feature locking mechanism to ensure consistency in edit transactions. If one client fetches a feature and makes some changes before submitting it back to the WFS, locks prevent other clients from making any changes to the same feature, ensuring a serializable transaction. If a WFS server supports the **LockFeature** operation, this will be reported in the server's GetCapabilities response.
 
-In practice few clients support the LockFeature operation.  
+In practice, few clients support the LockFeature operation. 
 
+
+Transaction
+-----------
+
+The **Transaction** operation can create, modify, and remove features published by a WFS. Each transaction will consists of zero or more Insert, Update, and Delete elements, with each transaction element performed in order. In GeoServer every transaction is *atomic*, meaning that if any of the elements fail, the transaction is abandoned and the data is unaltered. A WFS server that supports **transactions** is sometimes known as a WFS-T server.  **GeoServer fully supports transactions.** 
+
+More information on the syntax of transactions can be found in the `WFS specification <http://www.opengeospatial.org/standards/wfs>`_ and in the GeoServer sample requests.  
+
+ 
 GetGMLObject (WFS 1.1.0 only)
 -----------------------------
 
 A **GetGMLObject** operation accepts the identifier of a GML object (feature or geometry) and returns that object. Not widely used by client applications, it only makes sense in situations that require :ref:`app-schema.complex-features` by allowing clients to extract just a portion of the nested properties of a complex feature.  
 
 
-A stored query is essentially a regular WFS query that is stored on the server and can be invoked by its identifier. The query can also contain parameters and placeholders that are filled in dynamically when the request is invoked. 
+GetPropertyValue (WFS 2.0.0 only)
+---------------------------------
+
+A **GetPropertyValue** operation retrieves the value of a feature property, or part of the value of a complex feature property, from a data source for a given set of features identified by a query.
+
+
+GetFeatureWithLock (WFS 2.0.0 only)
+-----------------------------------
+
+A **GetFeatureWithLock** operation is very similar to a **GetFeature** operation, only this time when the set of features are returned from the WFS server, the features are also locked in anticipation of a subsequent transaction operation.
+ 
 
 CreateStoredQuery (WFS 2.0.0 only) 
 ----------------------------------
@@ -404,6 +417,4 @@ WFS also supports a number of formats for reporting exceptions. The supported va
      - ``EXCEPTIONS=text/javascript``
      - Return a JsonP in the form: paddingOutput(...jsonp...). See :ref:`wms_vendor_parameters` to change the callback name.
 
-A WFS server that supports **transactions** is sometimes known as a WFS-T server.  **GeoServer fully supports transactions.**
 
-.. _wfs_getcap:

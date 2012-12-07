@@ -3,23 +3,21 @@
 WFS schema mapping
 ==================
 
-One of the functions of the GeoServer WFS is to automatically map the internal 
-schema of a dataset to a feature type schema. The automatic mapping is performed
-with the following rules:
+One of the functions of the GeoServer WFS is to automatically map the internal schema of a dataset to a feature type schema. This mapping is undertaken according to the following rules:
 
-#. The name of the feature element maps to the name of the dataset
+#. The name of the feature element maps to the name of the dataset.
 #. The name of the feature type maps to the name of the dataset with the string 
-   "Type" appended to it
+   "Type" appended to it.
 #. The name of each attribute of the dataset maps to the name of an
-   element particle contained in the feature type
+   element particle contained in the feature type.
 #. The type of each attribute of the dataset maps to the appropriate
-   xml schema type (ex: xs:int, xs:double, etc...)
+   xml schema type (ex: xs:int, xs:double, and so on).
 
-As an example, consider a dataset with the following schema::
+For example, consider a dataset with the following schema::
 
   myDataset(intProperty:Integer, stringProperty:String, floatProperty:Float, geometry:Point)
 
-The above dataset would be mapped to the following XML schema, available from
+This dataset would be mapped to the following XML schema, available via
 a ``DescribeFeatureType`` request for the ``topp:myDataset`` type:
 
 .. code-block:: xml
@@ -52,21 +50,17 @@ a ``DescribeFeatureType`` request for the ``topp:myDataset`` type:
 Schema customization
 --------------------
 
-The GeoServer WFS supports a *limited* amount of customization with regard to 
-schema output. A custom schema can be used to:
+The GeoServer WFS supports a *limited* amount of customization with regard to schema output. A custom schema can be used to:
 
 * Limit the attributes which are exposed in the feature type schema
 * :ref:`Changing <type_changing>` the types of attributes in the schema
-* Change the structure of the schema, for example changing the base feature type
+* Change the structure of the schema—for example changing the base feature type
 
-A mapped schema is customized by creating a file called ``schema.xsd`` in the 
-appropriate feature type directory of the GeoServer data directory. As an simple
-example consider the use case of limiting the exposed attributes in the above 
-dataset.
+A mapped schema may be customized by creating a file called ``schema.xsd`` in the 
+appropriate feature type directory of the GeoServer data directory. 
 
-It is useful to start with the default output as a base as it is a complete
-schema. With the feature type schema shown above, a ``GetFeature`` request would
-result in features that look like the following:
+For example, it may be useful to limit the exposed attributes in the above 
+dataset. To start with, retrieve the default output as a benchmark of the complete schema. With the feature type schema listed above, the ``GetFeature`` request would be as follows:
 
 .. code-block:: xml
 
@@ -81,11 +75,9 @@ result in features that look like the following:
 	   </topp:geometry>
 	 </topp:myDataset>
 	
-Now consider the case of removing the ``floatProperty`` from attribute. To 
-achieve this:
+To remove ``floatProperty`` from the list of attributes, the following would be required:
 
-#. The original schema is modified and the ``floatProperty`` is removed,
-   resulting in the following type definition:
+#. The original schema is modified to remove the ``floatProperty``, resulting in the following type definition:
 
    .. code-block:: xml
 
@@ -104,21 +96,18 @@ achieve this:
 		    </xsd:complexContent>
 		 </xsd:complexType>
 		
-#. The result is saved in a file named ``schema.xsd``.
+#. The modification is saved in a file named ``schema.xsd``.
 #. The ``schema.xsd`` file is copied into the feature type directory for the
-   ``topp:myDataset``::
+   ``topp:myDataset``:
 
       copy schema.xsd $GEOSERVER_DATA_DIR/workspaces/<workspace>/<datastore>/myDataset/
 
-   Where ``<workspace>`` is the name of the workspace containing your datastore and  ``<datastore>`` is the name of the data store which contains ``myDataset``
+   In this example ``<workspace>`` is the name of the workspace containing your data store and  ``<datastore>`` is the name of the data store which contains ``myDataset``
 
-In order for the new schema to to be picked up by GeoServer the configuration 
-must be reloaded. This cab be done by logging into the admin interface and 
-clicking the ``Load`` button the ``Config`` page. Or alternatively by restarting
-the entire Server.
+The modified schema will only be available to GeoServer when the configuration is reloaded. 
+Log on to the GeoServer Web Administration Interface, click **Server Status** to access the **Server Status** page and click **Reload** to reload the configuration and catalog. Alternatively, restart GeoServer.
 
-Another ``DescribeFeatureType`` request for the ``topp:myDataset`` type now
-results in the ``floatProperty`` element being absent:
+A subsequent ``DescribeFeatureType`` request for ``topp:myDataset`` confirms the ``floatProperty`` element is absent:
 
    .. code-block:: xml
 
@@ -146,8 +135,7 @@ results in the ``floatProperty`` element being absent:
 
 	  </xsd:schema>
 	
-Another ``GetFeature`` request now results in features in which the
-``floatProperty`` is absent:
+A ``GetFeature`` request will now return features that don't include ``floatProperty``:
 
    .. code-block:: xml
 
@@ -166,23 +154,15 @@ Another ``GetFeature`` request now results in features in which the
 Type changing
 -------------
 
-Schema customization can be used to do a limited amount of *type changing*. 
-Limited by the fact that a changed type must be in the same "domain" as the 
-original type. For example integers types must be changed to integer types, 
-temporal types to temporal types, etc...
+Schema customization can be used to perform a limited amount of *type changing*, although this is limited by the fact that a changed type must be in the same *domain* as the original type. For example integers types must be changed to integer types, temporal types to temporal types, and so on.
 
-The most common case is for geometry attributes. Often it is the case that the 
-underlying dataset does not have the metadata necessary to report the specific
-type (Point,LineString,Polygon, etc...) of a geometry attribute. In these cases
-the automatic schema mapping would result in an element particle like the 
-following:
+The most common requirement is for geometry attributes. In many cases the underlying dataset does not have the necessary metadata to report the specific type (Point, LineString, Polygon, and so on) of a geometry attribute. The automatic schema mapping would result in an element definition similar to the following:
 
 .. code-block:: xml
 
      <xsd:element maxOccurs="1" minOccurs="0" name="geometry" nillable="true " type="gml:GeometryPropertyType"/>
 
-However it is often the case that the user knows the specific type of the 
-geometry, for example Point. The above element could be changed to:
+However if you know the specific type of the geometry, for example Point, the element definition above could be altered to:
 
 .. code-block:: xml
 

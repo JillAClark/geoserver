@@ -3,25 +3,25 @@
 WFS vendor parameters
 =====================
 
-WFS vendor parameters are non-standard request parameters 
-that are defined by an implementation to provide enhanced capabilities. 
-GeoServer supports a variety of vendor-specific WFS parameters.
+WFS vendor parameters are non-standard request parameters that are defined by an implementation to provide enhanced capabilities. GeoServer supports a variety of vendor-specific WFS parameters.
 
 CQL filters
 -----------
 
-In WFS :ref:`wfs_getfeature` GET requests the ``cql_filter`` parameter can be used to specify a filter in ECQL (Extended Common Query Language).  
-ECQL provides a more compact and readable syntax compared to OGC XML filters.
-For full details see the :ref:`filter_ecql_reference` and :ref:`cql_tutorial` tutorial.
+In WFS :ref:`wfs_getfeature` GET requests the ``cql_filter`` parameter can be used to specify a filter in ECQL (Extended Common Query Language). ECQL provides a more compact and readable syntax compared to OGC XML filters. For full details see the :ref:`filter_ecql_reference` and :ref:`cql_tutorial` tutorial.
 
 Example
-```````
+~~~~~~~
 
-A sample GET request OGC filter is::
+The following example illustrates a GET request OGC filter:
+
+:: 
 
    filter=%3CFilter%20xmlns:gml=%22http://www.opengis.net/gml%22%3E%3CIntersects%3E%3CPropertyName%3Ethe_geom%3C/PropertyName%3E%3Cgml:Point%20srsName=%224326%22%3E%3Cgml:coordinates%3E-74.817265,40.5296504%3C/gml:coordinates%3E%3C/gml:Point%3E%3C/Intersects%3E%3C/Filter%3E
 
-Using ECQL the filter is::
+Using ECQL, the filter would be:
+
+::
 
    cql_filter=INTERSECT(the_geom,%20POINT%20(-74.817265%2040.5296504))
 
@@ -29,25 +29,24 @@ Using ECQL the filter is::
 format_options
 --------------
 
-The ``format_options`` is a container for parameters that are format-specific. 
-The syntax is::
+The ``format_options`` parameter is a container for other parameters that are format-specific. The syntax is::
   
     format_options=param1:value1;param2:value2;...
     
-The supported format options are:
+The supported format option is:
 
-* ``callback`` (default is ``parseResponse``): specifies the callback function name for the jsonp response format.
+* ``callback`` (default is ``parseResponse``)—Specifies the callback function name for the jsonp response format
 
 Reprojection
 ------------
 
-WFS 1.1 allows the ability to reproject data (to have GeoServer store the data in one projection and return GML in another).
+WFS 1.1.0 and 2.0.0 support data reprojection—GeoServer can store the data in one projection and return GML in another projection. GeoServer supports this using WFS 1.0 as well. When submitting a WFS 1.0 :ref:`wfs_getfeature` GET request, you can add this parameter to specify the reprojection SRS:
 
-GeoServer supports this using WFS 1.0 as well.  When doing a WFS 1.0 :ref:`wfs_getfeature` GET request you can add this parameter to specify the reprojection SRS::
+::
 
   srsName=<srsName>
   
-where ``<srsName>`` is the code for the projection (such as ``EPSG:4326``).
+The code for the projection is represented by ``<srsName>``, for example ``EPSG:4326``.
 
 For POST requests, you can add the same code to the ``Query`` element.
 
@@ -55,16 +54,16 @@ For POST requests, you can add the same code to the ``Query`` element.
 XML request validation
 ----------------------
 
-By default, GeoServer is slightly more forgiving than the WFS specification requires.  To force incoming XML requests to be strictly valid, use the following parameter::
+GeoServer is less strict than the WFS specification requires when it comes to the validity of an XML request. To force incoming XML requests to be valid, use the following parameter::
 
    strict=[true|false]
    
-where ``false`` is the default option.
+The default option is ``false``.
 
 Example
-```````
+~~~~~~~
 
-Consider the following POST request:
+The following POST request will be processed successfully by GeoServer, although technically this request is invalid: 
 
 .. code-block:: xml
 
@@ -72,12 +71,12 @@ Consider the following POST request:
       <Query typeName="topp:states"/>
    </wfs:GetFeature>
 
-This request will be processed successfully in GeoServer, but technically this request is invalid:
+The request is invalid for two reasons:
 
-* The ``Query`` element should be prefixed with ``wfs:``
-* The namespace prefix has not been mapped to a namespace URI
+* The ``Query`` element should be prefixed with ``wfs:``.
+* The namespace prefix has not been mapped to a namespace URI.
 
-Executing the above command with ``strict=true`` results in an error.  For the request to be processed, it must be altered:
+Executing the above command with ``strict=true`` would result in an error. The correct syntax would be:
 
 .. code-block:: xml 
 
@@ -89,15 +88,15 @@ Executing the above command with ``strict=true`` results in an error.  For the r
 GetCapabilities namespace filter
 --------------------------------
 
-WFS :ref:`wfs_getcap` requests can be filtered to only return layers corresponding to a particular namespace.  To do this, add the following code to your request::
+WFS :ref:`wfs_getcap` requests may be filtered to return only those layers that correspond to a particular namespace. To apply this filter, add the following code to your request:
+
+::
 
    namespace=<namespace>
    
-where ``<namespace>`` is the namespace prefix you wish to filter on.
+The parameter ``<namespace>`` is the namespace prefix you wish to filter on. Providing an invalid namespace will not result in any errors, but the document returned will not contain any layer information.
 
-Using an invalid namespace prefix will not cause any errors, but the document returned will contain no information on any layers.
+.. note:: This only affects the GetCapabilities document; no other requests are affected. WFS requests given to other layers, even when a different namespace is specified, will still be processed.
 
-.. note:: This only affects the capabilities document, and not any other requests. WFS requests given to other layers, even when a different namespace is specified, will still be processed.
-
-.. warning:: Using this parameter may cause your capabilities document to become invalid (as the WFS specification requires the document to return at least one layer).
+.. warning:: Using this parameter may cause your GetCapabilities document to become invalid, as the WFS specification requires the document to return at least one layer.
 
