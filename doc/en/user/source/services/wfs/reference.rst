@@ -1,13 +1,13 @@
 .. _wfs_reference: 
 
 
-.. warning:: Document Status: ** Requires Tech review**
+.. warning:: Document Status: **Requires tech review**
 
 WFS reference
-============= 
+=============
 
 Introduction
------------- 
+------------
 
 The `Web Feature Service <http://www.opengeospatial.org/standards/wfs>`_ (WFS) is a standard created by the Open Geospatial Consortium (OGC) for creating, modifying and exchanging vector format geographic information on the Internet using HTTP. A WFS encodes and transfers information in Geography Markup Language(GML), a subset of XML. 
 

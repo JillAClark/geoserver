@@ -1,5 +1,7 @@
 .. _wfs_vendor_parameters:
 
+.. warning:: Document Status: **Requires tech review**
+
 WFS vendor parameters
 =====================
 

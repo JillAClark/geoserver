@@ -1,5 +1,7 @@
 .. _schema_mapping:
 
+.. warning:: Document Status: **Requires tech review**
+
 WFS schema mapping
 ==================
 

@@ -1,5 +1,8 @@
 .. _wfs_output_formats:
 
+
+.. warning:: Document Status: **Requires tech review**
+
 WFS output formats
 ==================
 
