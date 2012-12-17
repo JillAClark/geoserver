@@ -1,16 +1,16 @@
 .. _wfs_vendor_parameters:
 
-.. warning:: Document Status: **Requires tech review**
+.. warning:: Document Status: **Requires copyedit review**
 
 WFS vendor parameters
 =====================
 
-WFS vendor parameters are non-standard request parameters that are defined by an implementation to provide enhanced capabilities. GeoServer supports a variety of vendor-specific WFS parameters.
+WFS vendor parameters are non-standard request parameters defined by an implementation to provide enhanced capabilities. GeoServer supports a variety of vendor-specific WFS parameters.
 
 CQL filters
 -----------
 
-In WFS :ref:`wfs_getfeature` GET requests the ``cql_filter`` parameter can be used to specify a filter in ECQL (Extended Common Query Language). ECQL provides a more compact and readable syntax compared to OGC XML filters. For full details see the :ref:`filter_ecql_reference` and :ref:`cql_tutorial` tutorial.
+In WFS :ref:`wfs_getfeature` GET requests, the ``cql_filter`` parameter can be used to specify a filter in ECQL (Extended Common Query Language) format. ECQL provides a more compact and readable syntax compared to OGC XML filters. For full details see the :ref:`filter_ecql_reference` and :ref:`cql_tutorial` tutorial.
 
 Example
 ~~~~~~~
@@ -21,7 +21,7 @@ The following example illustrates a GET request OGC filter:
 
    filter=%3CFilter%20xmlns:gml=%22http://www.opengis.net/gml%22%3E%3CIntersects%3E%3CPropertyName%3Ethe_geom%3C/PropertyName%3E%3Cgml:Point%20srsName=%224326%22%3E%3Cgml:coordinates%3E-74.817265,40.5296504%3C/gml:coordinates%3E%3C/gml:Point%3E%3C/Intersects%3E%3C/Filter%3E
 
-Using ECQL, the filter would be:
+Using ECQL, the filter would be defined as follows:
 
 ::
 
@@ -42,30 +42,30 @@ The supported format option is:
 Reprojection
 ------------
 
-WFS 1.1.0 and 2.0.0 support data reprojection—GeoServer can store the data in one projection and return GML in another projection. GeoServer supports this using WFS 1.0 as well. When submitting a WFS 1.0 :ref:`wfs_getfeature` GET request, you can add this parameter to specify the reprojection SRS:
+As WFS 1.1.0 and 2.0.0 both support data reprojection, GeoServer can store the data in one projection and return GML in another projection. As GeoServer supports this using WFS 1.0.0 as well, when submitting a WFS 1.0.0 :ref:`wfs_getfeature` GET request, you can add this parameter to specify the reprojection SRS as follows:
 
 ::
 
   srsName=<srsName>
   
-The code for the projection is represented by ``<srsName>``, for example ``EPSG:4326``.
-
-For POST requests, you can add the same code to the ``Query`` element.
+The code for the projection is represented by ``<srsName>``, for example ``EPSG:4326``. For POST requests, you can add the same code to the ``Query`` element.
 
 
 XML request validation
 ----------------------
 
-GeoServer is less strict than the WFS specification requires when it comes to the validity of an XML request. To force incoming XML requests to be valid, use the following parameter::
+GeoServer is less strict than the WFS specification requires when it comes to the validity of an XML request. To force incoming XML requests to be valid, use the following parameter:
+
+::
 
    strict=[true|false]
    
-The default option is ``false``.
+The default option for this parameter is ``false``.
 
-Example
-~~~~~~~
+Validation example
+~~~~~~~~~~~~~~~~~~
 
-The following POST request will be processed successfully by GeoServer, although technically this request is invalid: 
+The following POST request will be successfully processed by GeoServer, although technically this request is invalid: 
 
 .. code-block:: xml
 
@@ -78,7 +78,7 @@ The request is invalid for two reasons:
 * The ``Query`` element should be prefixed with ``wfs:``.
 * The namespace prefix has not been mapped to a namespace URI.
 
-Executing the above command with ``strict=true`` would result in an error. The correct syntax would be:
+Executing the above command with the ``strict=true`` parameter would result in an error. The correct syntax should be:
 
 .. code-block:: xml 
 
@@ -90,15 +90,17 @@ Executing the above command with ``strict=true`` would result in an error. The c
 GetCapabilities namespace filter
 --------------------------------
 
-WFS :ref:`wfs_getcap` requests may be filtered to return only those layers that correspond to a particular namespace. To apply this filter, add the following code to your request:
+WFS :ref:`wfs_getcap` requests may be filtered to return only those layers that correspond to a particular namespace by adding the ``<namespace>`` parameter to the request.
+
+.. note:: This parameter only affects GetCapabilities requests. 
+
+To apply this filter, add the following code to your request:
 
 ::
 
    namespace=<namespace>
    
-The parameter ``<namespace>`` is the namespace prefix you wish to filter on. Providing an invalid namespace will not result in any errors, but the document returned will not contain any layer information.
+Although providing an invalid namespace will not result in any errors, the GetCapabilities document returned will not contain any layer information.
 
-.. note:: This only affects the GetCapabilities document; no other requests are affected. WFS requests given to other layers, even when a different namespace is specified, will still be processed.
-
-.. warning:: Using this parameter may cause your GetCapabilities document to become invalid, as the WFS specification requires the document to return at least one layer.
+.. warning:: Using this parameter may result your GetCapabilities document becoming invalid, as the WFS specification requires the document to return at least one layer.
 
